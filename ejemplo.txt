@@ -1,0 +1,12 @@
+<Tipo>
+<Operacion=SUMA>
+    <Numero >10</Numero> 
+        <Numero >40</Numero>
+    </Operacion>
+    <Operacion=SUMA>
+    <Numero >10</Numero> 
+        <Numero >40</Numero>
+    </Operacion>
+  
+
+</Tipo>
