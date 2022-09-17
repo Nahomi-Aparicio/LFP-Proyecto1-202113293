@@ -2,13 +2,13 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import Scrollbar as scroll
-from analizador import *
+from analizador import Analizador
 from tkinter import END, messagebox
 import os
 
 class Interfaz:
-    global analizar
-    analizar=Analizador()
+    global analizar2
+    analizar2=Analizador()
 
 
 
@@ -29,9 +29,9 @@ class Interfaz:
        
         label1=Label(f1,text="Archivo",bg='#1ab3ac',font=('Cooper Black', 12),fg = '#a1f5f1').place(x=0,y=0,width=200,height=30.33)        
         Abrir= Button(f1, text="Abrir",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12),command=self.abri).place(x=0, y=30, width=200, height=30)
-        guardar= Button(f1, text="Guardar",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12),command=guardar).place(x=0, y=60, width=200, height=30)
+        guardar= Button(f1, text="Guardar",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12),command=self.guardar).place(x=0, y=60, width=200, height=30)
         guardar_como = Button(f1, text="Guardar como",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12),command=self.guardarComo).place(x=0, y=90, width=200, height=30)
-        Analizar= Button(f1, text="Analizar",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12)).place(x=0, y=120, width=200, height=30)
+        Analizar= Button(f1, text="Analizar",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12),command=self.analizado).place(x=0, y=120, width=200, height=30)
         Errores= Button(f1, text="Errores",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12)).place(x=0, y=150, width=200, height=30)
         salir= Button(f1, text="Salir",bg= "#a1f5f1",fg='#1ab3ac',font=('Cooper Black', 12),command=self.salir).place(x=0, y=180, width=200, height=30)
 
@@ -59,15 +59,20 @@ class Interfaz:
         try:
             archivo2=open(self.archivo,"r+")
             contenido_archivo=archivo2.read()
-            #analizar.compilar(contenido_archivo)
-            self.caja.insert(1.0,contenido_archivo)
             
-
+            self.caja.insert(1.0,contenido_archivo)
+            self.contenido=contenido_archivo
             archivo2.close()
         except UnicodeDecodeError:
             messagebox.showerror("Error", "el archivo no es compatible")
         except FileNotFoundError:
             messagebox.showerror("ERROR", "no se encontro el archivo")
+
+
+    """def analizado(self):
+        analizar2.compilar(xml=self.archivo)"""
+       
+
             
        
 
@@ -78,14 +83,17 @@ class Interfaz:
 #guardar
     def guardar(self):
 
+
+
         contenido=self.caja.get(1.0,END)
         if self.archivo==None:
             self.guardarComo()
         else:
             self.archivo2=open(self.archivo,"w+")
             self.archivo2.write(contenido)
-            #analizar.compilar(contenido)
+            
             self.archivo2.close()
+
             messagebox.showinfo("guardar", "el archivo se guardo correctamente")
 
 #guardar como 

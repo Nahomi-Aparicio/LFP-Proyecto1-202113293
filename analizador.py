@@ -2,7 +2,7 @@ from enum import Enum
 from intentonumero import numero
 
 import re
-
+listaErrores_lexicos=[]
 class Token(Enum):
     Tk_menor="<"
     Tk_mayor=">"
@@ -24,7 +24,20 @@ class Token(Enum):
     TK_Tangente="TANGENTE"
     TK_Mod="MOD"
 
-#analisador lexico  
+#analisador lexico 
+# 
+
+class Errorres_lexicos:
+    def __init__(self,_tokem,_filas,_columnas,descripcion="") :
+        self.tokem=_tokem
+        self.filas=_filas
+        self.columnas=_columnas
+        self.descripcion=descripcion
+
+    def getErrores(self):
+        return {"tokem":self.tokem,"filas":self.filas,"columnas":self.columnas,"descripcion":self.descripcion}
+        
+
 
 class Analizador:
     
@@ -35,9 +48,11 @@ class Analizador:
         self.columna=0
         self.lista_cadena=[]
         self.tmp_cadena=""
-        self.lista1=[]
-        self.listaToken=[]
-        self.nuuu=numero
+        self.listanumero=[]
+        self.listatodo=[]
+        
+        
+        
 
 #quito loa < > de la cadena
     def quitar(self,_cadena:str,_num:int):
@@ -105,17 +120,19 @@ class Analizador:
                 
 #guardar el token self.columna+=int(s.end())
 
-                self.listaToken.append([self.linea,self.columna,s.group(),i]) #supuestamente guardo token en una lista falta nombre de token 
-                #self.nuuu(i,self.linea,self.columna)
-                
+                #supuestamente guardo token en una lista falta nombre de token 
+              
                 
                 if i ==Token.Tk_Numero.value:
 
                     _numero=s.group()
+                    self.listanumero.append(float(_numero))
                 _cadena=self.quitar(_cadena,s.end())
                 self.aumentandolineas()               #print(_cadena)
             except:
 #guardar error para tabla de errores
+                e=Errorres_lexicos(i,self.linea,self.columna,'error en numeros')
+                listaErrores_lexicos.append(e)
 
                 return{'result': _numero,'cadena':_cadena,"Error":True}
 
@@ -123,22 +140,9 @@ class Analizador:
         # en _numero se guarda los 
         
         print("Numero1",_numero)
-        self.lista1.append(_numero)
-       
-        #print('sumanumero',self.lista1)
-        #print(self.listaToken)
-        
-
         return{'result': _numero,'cadena':_cadena,"Error":False}
 
 
-
-    """def suma(self):
-        listasuma=self.listaToken
-        print(listasuma)
-        for i in listasuma:
-            if i[3]=="Numero":
-                print(i[2])"""
 
 
 
@@ -195,8 +199,10 @@ class Analizador:
                         if t!=None:
                             
                             i='SUMA'
-                            print(_cadena)                            
+                                                    
                             _operador=Token.TK_Suma
+                            _operador1='+'
+                            self.listanumero.append(_operador1)
                             
                             
 
@@ -206,6 +212,8 @@ class Analizador:
                         if t!=None:
                             i='RESTA'
                             _operador=Token.Tk_Resta
+                            _operador2='-'
+                            self.listanumero.append(_operador2)
 
 
                     #MULTIPLICADOR
@@ -252,11 +260,22 @@ class Analizador:
                         if _operador==None:
                         #otro error
                             print('error en operaciones  resta , suma, etc ')
+                            e=Errorres_lexicos(i,self.linea,self.columna,'error en numeros')
+                            listaErrores_lexicos.append(e)
                             return{'result': _numeroop,'cadena':_cadena,"Error":True}
 
                     wjefe=re.compile(f'^{i}')
                     s=wjefe.search(_cadena)
-                    #guardar el token self.columna+=int(s.end())
+
+                    if i =="/":
+                        if len(self.listanumero)!=0:
+                            self.listatodo.append(self.listanumero)
+                            self.listanumero=[]
+
+
+
+
+                    
                     
                     print("|",self.linea,"|", self.columna,"|",s.group())
                     self.columna+=int(s.end())               
@@ -265,6 +284,8 @@ class Analizador:
             except:
 #guardar error para tabla de errores
                 print('hay un error operacion ')
+                e=Errorres_lexicos(i,self.linea,self.columna,'error en operacion')
+                listaErrores_lexicos.append(e)
                 return{'result': _numeroop,'cadena':_cadena,"Error":True} 
                 
         #NUMERO1 OPERADOR NUMERO 2
@@ -284,7 +305,7 @@ class Analizador:
             Token.Tk_mayor.value,#>   
         ]
         _numero=""
-        listaq=[]
+        
         for i in tokens:
 
             try :
@@ -296,7 +317,7 @@ class Analizador:
                         _cadena=_result['cadena']
                         if _result["Error"]:
                             print('hay un error dentro deloperador y tipo')
-                            pass
+                            break
                             #break
                         if self.etiqueta(_cadena, "</Tipo>"):
                             salida=False
@@ -357,14 +378,23 @@ class Analizador:
        # print(lista_cadena)
 
         self.lista_cadena=lista_cadena
-        #self.Numero(una_cadena)
+        
+        print(self.tipo(una_cadena))
+       # print(listaErrores_lexicos)
+
+
+        if listaErrores_lexicos:
+            for i in listaErrores_lexicos:
+                i=i.getErrores()
+                print(i['tokem'],"|",i['filas'],"|",i['columnas'],"|",i['descripcion'])
         #self.operando(una_cadena)
+        print(self.listatodo)
         
-        print( self.tipo(una_cadena))
-        #self.suma()
-        print('holi')
+        """print( self.tipo(una_cadena))
+       """
         
         
-#
+        
+# return {"tokem":self.tokem,"filas":self.filas,"columnas":self.columnas,"descripcion":self.descripcion}
 Analizador().compilar()
 

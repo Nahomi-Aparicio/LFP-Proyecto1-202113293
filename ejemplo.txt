@@ -1,12 +1,17 @@
 <Tipo>
-<Operacion=SUMA>
-    <Numero >10</Numero> 
-        <Numero >40</Numero>
-    </Operacion>
+<Oper2acion=SUMA>
+    <Numero >130</Numero>
     <Operacion=SUMA>
-    <Numero >10</Numero> 
+    <Numero >130</Numero>
+<Operacion=SUMA>
+    <Numero >130</Numero>
+    <Operacion=RESTA>
+        <Numero >320</Numero>
         <Numero >40</Numero>
     </Operacion>
-  
 
-</Tipo>
+</Operacion>
+</Operacion>
+</Operacion>
+
+</T2ipo>
