@@ -15,6 +15,7 @@ class Interfaz:
 
     def __init__(self):
         self.archivo=None
+        
         self.menu_inicio()
         
 
@@ -53,10 +54,12 @@ class Interfaz:
         
     #--------------------------------METODOS PARA ARCHIVO ---------------------------------------------------
     def abri(self):
+        self.caja.delete("1.0",END)
         
         
         self.archivo = filedialog.askopenfilename(initialdir = "/",title = "Seleccione archivo",filetypes = (("txt files","*.txt"),("all files","*.*")))
         try:
+            
             archivo2=open(self.archivo,"r+")
             contenido_archivo=archivo2.read()
             
@@ -69,8 +72,8 @@ class Interfaz:
             messagebox.showerror("ERROR", "no se encontro el archivo")
 
 
-    """def analizado(self):
-        analizar2.compilar(xml=self.archivo)"""
+    def analizado(self):
+        analizar2.compilar(xml=self.archivo)
        
 
             
