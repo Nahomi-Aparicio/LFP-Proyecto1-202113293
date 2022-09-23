@@ -391,6 +391,7 @@ class OPerandopy:
 
             if self.listatodo[i][listaM2]!='tangente'and self.listatodo[i][listaM2]!='seno' and self.listatodo[i][listamientras1]=='%':
                 residuo_contando=self.listatodo[i][listaM2]%self.listatodo[i][listaM3]
+                unalista.append((self.listatodo[i][listaM2],'%',self.listatodo[i][listaM3]))
                 for j in range(listamientras1):
                     continuando_contando_mo=j+1
                     continuando_contando_2mo=j+2
@@ -451,8 +452,9 @@ class OPerandopy:
                 cafelista=[]
     #seno
             if self.listatodo[i][listaM2]=='seno':
+                seno_contando=(self.listatodo[i][listaM3])*(math.pi/180)
                 
-                seno_contando=math.degrees(math.sin(self.listatodo[i][listaM3]))
+                seno_contando=math.sin(seno_contando)
                 unalista.append(('seno(',self.listatodo[i][listaM3],')'))
                  
                 q=str(unalista).replace(',','').replace("[","").replace("]","").replace("'","").replace(",","").replace(" ","")
@@ -473,7 +475,9 @@ class OPerandopy:
 
     #coseno
             if self.listatodo[i][listaM2]=='coseno':
-                coseno_contando=math.cos(self.listatodo[i][listaM3])
+                coseno_contando=(self.listatodo[i][listaM3])*(math.pi/180)
+                coseno_contando=(math.cos(coseno_contando))
+                print(coseno_contando)
                 unalista.append(('coseno(',self.listatodo[i][listaM3],')'))
                 
                  
@@ -493,7 +497,8 @@ class OPerandopy:
                 cafelista=[]
     #tangente
             if self.listatodo[i][listaM2]=='tangente':
-                tangente_contando=math.tan(self.listatodo[i][listaM3])
+                coseno_contando=(self.listatodo[i][listaM3])*(math.pi/180)
+                tangente_contando=math.tan(coseno_contando)
                 unalista.append(('tangente(',self.listatodo[i][listaM3],')'))
                 q=str(unalista).replace(',','').replace("[","").replace("]","").replace("'","").replace(",","").replace(" ","")
                 otralista.append(q)

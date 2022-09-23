@@ -1,6 +1,5 @@
 from enum import Enum
-import os
-from aritmeticas import aritmeticas
+
 from perfiles import OPerandopy
 import math
 import re
@@ -29,7 +28,7 @@ class Token(Enum):
 #titulo segunda etiqueta
     TK_Texto="[a-zA-Z,À-ÿ\u00f1\u00d1,'+'-'-','*',0.0-9.0*,':','%','=','/','^','√','(',')'*]*"
     TK_TextoPrincipal="Texto"
-    TK_Operaciones="[,.a-zA-ZÀ-ÿ\u00f1\u00d1 ]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1])[a-zA-ZÀ-ÿ\u00f1\u00d1_.]*[0.0-9.0]*[,.a-zA-ZÀ-ÿ\u00f1\u00d1 ]+(\s*[a-zA-ZÀ-ÿ\u00f1\u00d1])[a-zA-ZÀ-ÿ\u00f1\u00d1_.:]*[0.0-9.0]*"
+    TK_Operaciones="[a-zA-Z,À-ÿ\u00f1\u00d1,'+'-'-','*',0.0-9.0*,':','%','=','/','^','√','(',')'*]*"
     Tk_Titulo="Titulo"
     Tk_Descripcion="Descripcion"
     TK_DESCRIPTION2  = "\[TEXTO\]"
@@ -41,7 +40,6 @@ class Token(Enum):
     Tk_color2='[AZUL,ROJO,VERDE,AMARILLO,NEGRO,NARANJA,MORADO,ROSADO]*'
     Tk_tamano="Tamanio"
     TK_Estilo="Estilo"
-
 #analisador lexico 
 # 
 
@@ -55,14 +53,11 @@ class Errorres_lexicos:
     def getErrores(self):
         return {"tokem":self.tokem,"filas":self.filas,"columnas":self.columnas,"descripcion":self.descripcion}
    
-
 class Analizador:
     global  operandopy2,aritmetica,operacionesarit
     operandopy2=OPerandopy()
-    aritmetica=aritmeticas()
-    operacionesarit=[]
-
     
+    operacionesarit=[]    
 
     def __init__(self):
         self.cadena = ""
@@ -79,11 +74,6 @@ class Analizador:
         self.colorTT=None
         self.tamano=None
 
-
-
-
-
-
 #quito loa < > de la cadena
     def quitar(self,_cadena:str,_num:int):
         _tmp=""
@@ -96,7 +86,6 @@ class Analizador:
             contador1+=1
         return _tmp
            
-
 #aumentando las lineas de el archivo de entrada
     def aumentandolineas(self): 
         _tmp= self.lista_cadena[self.linea]
@@ -153,18 +142,10 @@ class Analizador:
 
     def importaroperaciones (self):
         operandopy2.operation(paso_lista=self.listatodo)
-        
-
-      
-        
-
-        
+     
     def importacion2(self):
         aritmetica.haciendoop(lista=self.intento)
-    
-    
-        
-
+  
 #operadores 
     def operando (self,_cadena:str):
         tokens=[
@@ -313,7 +294,7 @@ class Analizador:
                         t=subjefe.search(_cadena)
                         if t!=None:
                             i='TANGENTE'
-                            _operador=Token.TK_Seno
+                            _operador=Token.TK_Tangente
                             tokens.pop(6)
                             _operador10='tangente'                        
                             self.listanumero.append(_operador10)
@@ -346,8 +327,171 @@ class Analizador:
         
                 
         return{'result': _numeroop,'cadena':_cadena,"Error":False}
-   
-       
+ 
+    def operacionAri(self):
+        #print(operacionesarit)
+        unalista=[]
+        
+        for i in range(len(operacionesarit)):
+            #SUMA
+            if operacionesarit[i][1]==Token.TK_Suma:
+                print('suma')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(int(operacionesarit[i][0])+int(operacionesarit[i-1]))
+                    unalista.append(('operacion',i+1,operacionesarit[i][0]+operacionesarit[i-1])) 
+                    print(operacionesarit[i])
+                    
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':
+                    operacionesarit[i]=(operacionesarit[i-1]+operacionesarit[i-2])
+                    unalista.append(('operacion',i+1,operacionesarit[i-1]+operacionesarit[i-2]) )
+                    print(operacionesarit[i])                    
+                else:
+                    operacionesarit[i]=(int(operacionesarit[i][0])+int(operacionesarit[i][2]))
+                    print(operacionesarit[i])
+            #RESTA
+            elif operacionesarit[i][1]==Token.Tk_Resta:
+                print('resta')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(int(operacionesarit[i][0])-int(operacionesarit[i-1]))
+                    unalista.append(('operacion',i+1,operacionesarit[i][0]-operacionesarit[i-1]))
+                    print(operacionesarit[i])
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':
+                    operacionesarit[i]=(operacionesarit[i-2]-operacionesarit[i-1])
+                    unalista.append(('operacion',i+1,operacionesarit[i-2]-operacionesarit[i-1]) )
+                    print(operacionesarit[i])                    
+                else:
+                    operacionesarit[i]=(int(operacionesarit[i][0])-int(operacionesarit[i][2]))
+                    print(operacionesarit[i])
+            #DIVISION
+
+            elif operacionesarit[i][1]==Token.Tk_Division:
+                print('division')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    if operacionesarit[i-1]==0:
+                        print('error')
+                    else:
+                        operacionesarit[i]=(int(operacionesarit[i][0])/int(operacionesarit[i-1]))
+                        print(operacionesarit[i])
+                        unalista.append(('operacion',i+1,operacionesarit[i][0]/operacionesarit[i-1]))
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':                    
+                    operacionesarit[i]=(operacionesarit[i-2]/operacionesarit[i-1])
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i-2]/operacionesarit[i-1]))
+                else:
+                    if operacionesarit[i][2]==0:
+                        print('error')
+                    else:
+                        operacionesarit[i]=(int(operacionesarit[i][0])/int(operacionesarit[i][2]))
+                        print(operacionesarit[i])
+            #MULTIPLICACION
+            elif operacionesarit[i][1]==Token.Tk_Multiplicacion:
+                print('multipli')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(int(operacionesarit[i][0])*int(operacionesarit[i-1]))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i][0]*operacionesarit[i-1]))
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':
+                    operacionesarit[i]=(int(operacionesarit[i-1])*int(operacionesarit[i-2]))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i-2]*operacionesarit[i-1]))
+                else:
+                    operacionesarit[i]=(int(operacionesarit[i][0])*int(operacionesarit[i][2]))
+                    print(operacionesarit[i])
+            #POTENCIA
+            elif operacionesarit[i][1]==Token.Tk_Potencia:
+                print('po')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(int(operacionesarit[i][0])**int(operacionesarit[i-1]))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i][0]**operacionesarit[i-1]))
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':
+                    operacionesarit[i]=(int(operacionesarit[i-1])*int(operacionesarit[i-2]))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i-1]*operacionesarit[i-2]))
+                else:
+                    operacionesarit[i]=(int(operacionesarit[i][2])**int(operacionesarit[i][0]))
+                    print(operacionesarit[i])
+            #RAIZ
+            elif operacionesarit[i][1]==Token.TK_RAIZ:
+                print('ra')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(int(operacionesarit[i][1])**(1/int(operacionesarit[i-0])))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i][0]**operacionesarit[i-1]))
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':
+                    operacionesarit[i]=(int(operacionesarit[i-1])+int(1/int(operacionesarit[i-2])))
+                    unalista.append(('operacion',i+1,operacionesarit[i-1]+(1/int(operacionesarit[i-2]))))
+                    print(operacionesarit[i])
+
+                else:
+                    operacionesarit[i]=(int(operacionesarit[i][2])**(1/int(operacionesarit[i][0])))
+                    print(operacionesarit[i])
+            #MODULO
+            elif operacionesarit[i][1]==Token.TK_Mod:
+                print('mo')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(int(operacionesarit[i][0])%int(operacionesarit[i-1]))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,operacionesarit[i][0]%operacionesarit[i-1]))
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]=='':
+                    operacionesarit[i]=(int(operacionesarit[i-1])%int(operacionesarit[i-2]))
+                    print(operacionesarit[i])
+                else:
+                    operacionesarit[i]=(int(operacionesarit[i][0])%int(operacionesarit[i][2]))
+                    print(operacionesarit[i])
+                   
+            #INVERSO
+            elif operacionesarit[i][1]==Token.TK_Inverso:
+                print('in')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    print('i')
+                    operacionesarit[i]=(1/int(operacionesarit[i][0]))
+                    print(operacionesarit[i])
+                    unalista.append(('operacion',i+1,1/operacionesarit[i][0])) 
+                elif operacionesarit[i][0]=='' and operacionesarit[i][2]==None:
+                    print('g')
+                    operacionesarit[i]=(1/int(operacionesarit[i-1]))
+                    print(operacionesarit[i])  
+                    unalista.append(('operacion',i+1,1/operacionesarit[i-1]))            
+                else:
+                    print('in')
+                    operacionesarit[i]=(1/int(operacionesarit[i][0]))
+                    print(operacionesarit[i])
+            #SENO
+            elif operacionesarit[i][1]==Token.TK_Seno:
+                print('sen')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]=='':
+                    operacionesarit[i]=(math.sin(int(operacionesarit[i][0])))
+                    print(operacionesarit[i])                
+                else:
+                    operacionesarit[i][0]=int(operacionesarit[i][0])*(math.pi/180)
+                    operacionesarit[i]=(math.sin(operacionesarit[i][0]))
+                    print(operacionesarit[i])
+            #COSENO
+            elif operacionesarit[i][1]==Token.TK_Coseno:
+                print('cos')
+                if operacionesarit[i][2]==None and operacionesarit[i][0]=='':
+                    Cos=int(operacionesarit[i-1])*(math.pi/180)
+                    operacionesarit[i]=(math.cos(Cos))
+                    print(operacionesarit[i])                
+                else:
+                    C=int(operacionesarit[i][0])*(math.pi/180)
+                    operacionesarit[i]=(math.cos(C))
+                    
+                    print(operacionesarit[i])
+            #TANGENTE
+            elif operacionesarit[i][1]==Token.TK_Tangente:
+                print('ta')
+                if operacionesarit[i][2]=='' and not operacionesarit[i][0]==None:
+                    R=int(operacionesarit[i][0])*(math.pi/180)
+                    operacionesarit[i]=(math.tan(R))
+                    print(operacionesarit[i])                
+                else:
+                    R=int(operacionesarit[i][0])*(math.pi/180)
+                    operacionesarit[i]=(math.tan(R))
+                    print(operacionesarit[i])
+        print(unalista)
+
     def tipo(self,_cadena:str):
         tokens=[
             Token.Tk_menor.value,#<
@@ -388,95 +532,39 @@ class Analizador:
                 return{'result': _numero,'cadena':_cadena,"Error":True}
 
         return{'result': _numero,'cadena':_cadena,"Error":False}
-
-
-    def compilar(self):
-        xml="ejemplo.txt"
-
-        archivo=open(xml,"r",encoding="utf-8")
-        contenido_archivo=archivo.readlines()
-        archivo.close()
-        
-        una_cadena=""
-        lista_cadena=[]
-        nueval=[]
-        otral=[]
-
-        for i in contenido_archivo:
-           i=i.replace(" ","")
-           i=i.replace("\n","")
-           if i!="":
-            una_cadena+=i
-            lista_cadena.append(i)
-        for l in contenido_archivo:
-            if l!="":           
-               otral.append(l)
-
-        
-        
-       
-        self.lista_cadena=lista_cadena
-        
-       # print(self.tipo(una_cadena))
-        print(self.todo(una_cadena))
-        print(self.listatodo)
-       
-
-       
-             
-        self.importaroperaciones()
-        Q=operandopy2.juan()
-        
-
-        if self.colorTT!=None and self.tamano!=None and self.colord!=None and self.tamanoD!=None and  self.colorCo!=None and  self.tamanoCC!=None :
+   
+    def texti(self,_cadena:str):
+        tokens=[
             
-       
-            f = open('holamundo.html','w',encoding="utf-8")
-            salidaA = """<html>\n<head></head><body bgcolor="#f4cffe">\n<h1 align="center" style="color:"""
-            salidaA +=str(self.colorTT)
-            salidaA +="""  ;font-size:"""
-            salidaA +=str(self.tamano)
-            salidaA+="""px">"""
-            salidaA += str(self.aqui_titulo).replace("[","").replace("]","").replace("'","")
-            salidaA +="</font></h1>\n"
-            r=0
-            for x in range(len(otral)):
-                if otral[x]=="<Texto>\n":
-                    r=0
-                    while otral[x+r]!="</Texto>\n":
-                        salidaA+="""<p style="color:"""
-                        salidaA +=str(self.colord)
-                        salidaA +=""" ;font-size:"""
-                        salidaA +=str(self.tamanoD)
-                        salidaA+="""px">"""
-                        salidaA+=otral[x+r]
-                        salidaA+="</font></p>\n"
-                        r+=1
-            salidaA+="""<p align="center" style="color:#691d92;font-size:20px">\n"""
-            salidaA+='operaciones resueltas '
-            salidaA+="</font></p>\n"
-            for y in range(len(Q)):
-                salidaA+="""<p style="color:"""
-                salidaA +=str(self.colorCo)
-                salidaA +=""" ;font-size:"""
-                salidaA +=str(self.tamanoCC)
-                salidaA+="""px">"""
-                salidaA+=str(Q[y]).replace("[","").replace("]","").replace("'","")
-                salidaA+="</font></p>\n"
-            salidaA+="</body>\n </html>"
-            f.write(salidaA)
-            f.close()
-            webbrowser.open_new_tab('holamundo.html')
-        else:
-            pass
-
-
-
+            Token.Tk_menor.value,#<
+            Token.TK_TextoPrincipal.value,#texto
+            Token.Tk_mayor.value,#>
+            Token.TK_Texto.value,#niuewdfhuwebcehcoi
+            Token.Tk_menor.value,#<
+            Token.Tk_pleca.value,#/
+            Token.TK_TextoPrincipal.value,#texto
+            Token.Tk_mayor.value
+        ]
+        _descrip=""
+        self.descrip=None
+        for i in tokens:
+            try:
+                jefe=re.compile(f'^{i}')
+                so=jefe.search(_cadena)                    
+                print("|",self.linea,"|", self.columna,"|",so.group())
+                self.columna+=int(so.end())
+                if i == Token.TK_Texto.value:
+                    _descrip+=so.group()
+                _cadena=self.quitar(_cadena,so.end())
+                self.descrip=_descrip
+                self.aumentandolineas()  
+            except:                
+                print('hay un erroren tipo ')
+                return{'result': _descrip,'cadena':_cadena,"Error":True}
         
 
+        return{'result': _descrip,'cadena':_cadena,"Error":False}
 
-
-      
     def titulo(self,_cadena:str):
         tokens=[
             
@@ -645,110 +733,7 @@ class Analizador:
                 return{'result': _descrip,'cadena':_cadena,"Error":True}
 
         return{'result': _descrip,'cadena':_cadena,"Error":False}
-    
-    def texti(self,_cadena:str):
-        tokens=[
-            
-            Token.Tk_menor.value,#<
-            Token.TK_TextoPrincipal.value,#texto
-            Token.Tk_mayor.value,#>
-            Token.TK_Texto.value,#niuewdfhuwebcehcoi
-            Token.Tk_menor.value,#<
-            Token.Tk_pleca.value,#/
-            Token.TK_TextoPrincipal.value,#texto
-            Token.Tk_mayor.value
-        ]
-        _descrip=""
-        self.descrip=None
-        for i in tokens:
-            try:
-                jefe=re.compile(f'^{i}')
-                so=jefe.search(_cadena)                    
-                print("|",self.linea,"|", self.columna,"|",so.group())
-                self.columna+=int(so.end())
-                if i == Token.TK_Texto.value:
-                    _descrip+=so.group()
-                _cadena=self.quitar(_cadena,so.end())
-                self.descrip=_descrip
-                self.aumentandolineas()  
-            except:                
-                print('hay un erroren tipo ')
-                return{'result': _descrip,'cadena':_cadena,"Error":True}
-        
-
-        return{'result': _descrip,'cadena':_cadena,"Error":False}
-
-    def todo(self,_cadena:str):
-        tokens=[
-            "TIPO",
-            "TEXTO",
-            "FUNCION",
-            "ESTILO"
-        ]
-        _descrip=""
-        for i in tokens:
-            try:
-                if "TIPO" == i:
-                    salida=True
-                    if salida:
-                        print('*******************************************')
-                        _result=self.tipo(_cadena)
-                        _cadena=_result['cadena']
-                        if _result["Error"]:
-                            print('hay un error dentro deloperador y tipo')
-                            salida=False
-                            #break
-                        if self.etiqueta(_cadena, "</tipo>"):
-                            print('paso')
-                            salida=False
-                if "TEXTO" == i:
-                    salida=True
-                    if salida:
-                        print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
-                        _result=self.texti(_cadena)
-                        _cadena=_result['cadena']
-                        if _result["Error"]:
-                            print('hay un error dentro deloperador y tipo')
-                            salida=False
-                            #break
-                        if self.etiqueta(_cadena, "</Texto>"):
-                            print('paso')
-                            salida=False
-                       
-                   
-                   
-                elif "FUNCION" == i:
-                    salida=True
-                    if salida:
-                        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-                        _result=self.funci(_cadena)
-                        _cadena=_result['cadena']
-                        if _result["Error"]:
-                            print('hay un error dentro deloperadorw y tipo')
-                            salida=False
-                            #break
-                        if self.etiqueta(_cadena, "</Funcion>"):
-                            salida=False
-
-                elif "ESTILO" == i:
-                    salida=True
-                    if salida:
-                        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-                        _result=self.estilo(_cadena)
-                        _cadena=_result['cadena']
-                        if _result["Error"]:
-                            print('hay un error dentro deloperadorw y tipo')
-                            salida=False
-                            #break
-                        if self.etiqueta(_cadena, "</Funcion>"):
-                            salida=False
-                   
-            except:                
-                print('hay un erroren tipo ')
-                return{'result': _descrip,'cadena':_cadena,"Error":True}
-
-        return{'result': _descrip,'cadena':_cadena,"Error":False}
-
+ 
     def titulo2(self,_cadena:str):
 
         Tokene=[
@@ -1006,80 +991,148 @@ class Analizador:
 
         return{'result': _descrip,'cadena':_cadena,"Error":False}
 
+ 
+    def todo(self,_cadena:str):
+        tokens=[
+            "TIPO",
+            "TEXTO",
+            "FUNCION",
+            "ESTILO"
+        ]
+        _descrip=""
+        for i in tokens:
+            try:
+                if "TIPO" == i:
+                    salida=True
+                    if salida:
+                        print('*******************************************')
+                        _result=self.tipo(_cadena)
+                        _cadena=_result['cadena']
+                        if _result["Error"]:
+                            print('hay un error dentro deloperador y tipo')
+                            salida=False
+                            #break
+                        if self.etiqueta(_cadena, "</tipo>"):
+                            print('paso')
+                            salida=False
 
+                if "TEXTO" == i:
+                    salida=True
+                    if salida:
+                        print('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+                        _result=self.texti(_cadena)
+                        _cadena=_result['cadena']
+                        if _result["Error"]:
+                            print('hay un error dentro deloperador y tipo')
+                            salida=False
+                            #break
+                        if self.etiqueta(_cadena, "</Texto>"):
+                            print('paso')
+                            salida=False 
+                   
+                elif "FUNCION" == i:
+                    salida=True
+                    if salida:
+                        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+                        _result=self.funci(_cadena)
+                        _cadena=_result['cadena']
+                        if _result["Error"]:
+                            print('hay un error dentro deloperadorw y tipo')
+                            salida=False
+                            #break
+                        if self.etiqueta(_cadena, "</Funcion>"):
+                            salida=False
+
+                elif "ESTILO" == i:
+                    salida=True
+                    if salida:
+                        print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+                        _result=self.estilo(_cadena)
+                        _cadena=_result['cadena']
+                        if _result["Error"]:
+                            print('hay un error dentro deloperadorw y tipo')
+                            salida=False
+                            #break
+                        if self.etiqueta(_cadena, "</Funcion>"):
+                            salida=False
+                   
+            except:                
+                print('hay un erroren tipo ')
+                return{'result': _descrip,'cadena':_cadena,"Error":True}
+
+        return{'result': _descrip,'cadena':_cadena,"Error":False}
+
+    def compilar(self):
+        xml="ejemplo.txt"
+
+        archivo=open(xml,"r",encoding="utf-8")
+        contenido_archivo=archivo.readlines()
+        archivo.close()
+        
+        una_cadena=""
+        lista_cadena=[]
+        nueval=[]
+        otral=[]
+
+        for i in contenido_archivo:
+           i=i.replace(" ","")
+           i=i.replace("\n","")
+           if i!="":
+            una_cadena+=i
+            lista_cadena.append(i)
+        for l in contenido_archivo:
+            if l!="":           
+               otral.append(l)
+        self.lista_cadena=lista_cadena
+        
+        print(self.todo(una_cadena))
+        #print(self.listatodo)
+        self.importaroperaciones()
+        Q=operandopy2.juan()
+        self.operacionAri()
+        #Q=[]
         
 
+        if self.colorTT!=None and self.tamano!=None and self.colord!=None and self.tamanoD!=None and  self.colorCo!=None and  self.tamanoCC!=None :
+            
+       
+            f = open('RESULTADOS_202113293.html','w',encoding="utf-8")
+            salidaA = """<html>\n<head></head><body bgcolor="#f4cffe">\n<h1 align="center" style="color:"""
+            salidaA +=str(self.colorTT)
+            salidaA +="""  ;font-size:"""
+            salidaA +=str(self.tamano)
+            salidaA+="""px">"""
+            salidaA += str(self.aqui_titulo).replace("[","").replace("]","").replace("'","")
+            salidaA +="</font></h1>\n"
+            r=0
+            for x in range(len(otral)):
+                if otral[x]=="<Texto>\n":
+                    r=0
+                    while otral[x+r]!="</Texto>\n":
+                        salidaA+="""<p style="color:"""
+                        salidaA +=str(self.colord)
+                        salidaA +=""" ;font-size:"""
+                        salidaA +=str(self.tamanoD)
+                        salidaA+="""px">"""
+                        salidaA+=otral[x+r]
+                        salidaA+="</font></p>\n"
+                        r+=1
+            salidaA+="""<p align="center" style="color:#691d92;font-size:20px">\n"""
+            salidaA+='operaciones resueltas '
+            salidaA+="</font></p>\n"
+            for y in range(len(Q)):
+                salidaA+="""<p style="color:"""
+                salidaA +=str(self.colorCo)
+                salidaA +=""" ;font-size:"""
+                salidaA +=str(self.tamanoCC)
+                salidaA+="""px">"""
+                salidaA+=str(Q[y]).replace("[","").replace("]","").replace("'","")
+                salidaA+="</font></p>\n"
+            salidaA+="</body>\n </html>"
+            f.write(salidaA)
+            f.close()
+            webbrowser.open_new_tab('RESULTADOS_202113293.html')
+        else:
+            pass
+  
 Analizador().compilar()
-
-""" else:
-                    jefe=re.compile(f'^{i}')
-                    s=jefe.search(_cadena)
-                    print("|",self.linea,"|", self.columna,"|",s.group())
-                    self.columna+=int(s.end())
-                    _cadena=self.quitar(_cadena,s.end())
-                    self.aumentandolineas()
-                    
-                    
-                    
-                    
-                    for i in operacionesarit:
-            if i[1]==Token.TK_Suma:
-                print("suma")
-                
-                print(i[0]+i[2])
-            if i[1]==Token.Tk_Resta:
-                print("resta")
-               
-                print(i[0]-i[2])
-            if i[1]==Token.Tk_Multiplicacion:
-                print("multiplicacion")
-                
-                print(i[0]*i[2])
-            if i[1]==Token.Tk_Division:
-                print("division")
-                
-                print(i[0]/i[2])
-            if i[1]==Token.TK_RAIZ:
-                print("raiz")
-                
-                print(i[0]**(1/i[2]))
-            if i[1]==Token.Tk_Potencia:
-                print("potencia")
-                
-                print(i[0]**i[2])
-            if i[1]==Token.TK_Mod:
-                print("mod")
-                print(i[0],i[1],i[2])
-                print(i[0]%i[2])
-            if i[1]==Token.TK_Inverso:
-                print("inverso")
-                print(i[0],i[1],i[2])
-                print(i[0]**-1)
-            if i[1]==Token.TK_Seno:
-                print("seno")
-                print(i[0],i[1],i[2])                
-                print(math.sin(int(i[0])))
-            if i[1]==Token.TK_Coseno:
-                print("coseno")
-                print(i[0],i[1],i[2])
-                print(math.cos(int(i[0])))
-            if i[1]==Token.TK_Tangente:
-                print("tangente")
-                print(i[0],i[1],i[2])
-                print(math.tan(int(i[0])))
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    """

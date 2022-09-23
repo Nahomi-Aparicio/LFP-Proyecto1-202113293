@@ -3,46 +3,55 @@
     <Numero>50</Numero>
     <Numero>25</Numero>
 </Operacion>
-<Operacion=RESTA>
-    <Numero>20</Numero>
+
 <Operacion=RESTA>
     <Numero>20</Numero>
     <Numero>5</Numero>
 </Operacion>
-</Operacion>
+
 <Operacion=MULTIPLICACION>
     <Numero>20</Numero>
     <Numero>4</Numero>
 </Operacion>
+
 <Operacion=DIVISION>
     <Numero>500</Numero>
     <Numero>25</Numero>
 </Operacion>
+
 <Operacion=POTENCIA>
     <Numero>2</Numero>
     <Numero>3</Numero>
 </Operacion>
+
 <Operacion=RAIZ>
     <Numero>2</Numero>
     <Numero>64</Numero>
 </Operacion>
+
 <Operacion=INVERSO>
     <Numero>60</Numero>
 </Operacion>
+
 <Operacion=SENO>
     <Numero>90</Numero>
 </Operacion>
+
 <Operacion=COSENO>
     <Numero>90</Numero>
 </Operacion>
+
 <Operacion=TANGENTE>
     <Numero>30</Numero>
 </Operacion>
+
 <Operacion=MOD>
     <Numero>25</Numero>
     <Numero>7</Numero>
 </Operacion>
+
 </Tipo>
+
 <Texto>
 Archivo de prueba para operaciones simples
 RESULTADOS ESPERADOS
@@ -69,3 +78,4 @@ OP11 MOD: 25%7 = 3
     <Titulo Color=AZUL Tamanio=20/>
     <Descripcion Color=VERDE Tamanio=10/>
     <Contenido Color=ROJO Tamanio=10/>
+</Estilo> 
