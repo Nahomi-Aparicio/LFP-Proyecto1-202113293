@@ -1,0 +1,46 @@
+<Tipo>
+<Operacion=SUMA>
+    <Operacion=MULTIPLICACION>
+        <Numero>20.2</Numero>
+        <Numero>4.3</Numero>
+    </Operacion>
+
+    <Operacion=DIVISION>
+        <Numero>50.2</Numero>
+        <Numero>2.5</Numero>
+    </Operacion>
+</Operacion>
+
+<Operacion=RESTA>
+  <Numero>6</Numero>
+    <Operacion=POTENCIA>
+        <Numero>6</Numero>
+        <Numero>5</Numero>
+    </Operacion>
+
+    <Operacion=RAIZ>
+        <Numero>2</Numero>
+        <Numero>64</Numero>
+    </Operacion>
+</Operacion> 
+</Tipo>
+
+<Texto>
+Archivo de prueba para operaciones COMPLEJAS
+RESULTADOS ESPERADOS
+OP1 COMPLEJA: (20*4)+(500/5) = 180
+OP2 COMPLEJA: (5^6)-(2√64) = 15617
+
+</Texto>
+
+<Funcion = ESCRIBIR>
+    <Titulo> Operaciones COMPLEJAS </Titulo>
+    <Descripcion> [TEXTO] </Descripcion>
+    <Contenido> [TIPO] </Contenido>
+</Funcion>
+
+<Estilo>
+    <Titulo Color=NEGRO Tamanio=20/>
+    <Descripcion Color=ROJO Tamanio=10/>
+    <Contenido Color=AZUL Tamanio=10/>
+</Estilo> 
